@@ -7,10 +7,13 @@ export type UserID = Principal;
 export interface UserRecord {
   'username' : Username,
   'userId' : UserID,
+  'friends' : Array<UserID>,
   'avatar' : AvatarID,
 }
 export type Username = string;
 export interface _SERVICE {
+  'addFriend' : ActorMethod<[UserID], [boolean, string]>,
+  'getFriendsList' : ActorMethod<[], [] | [Array<UserID>]>,
   'getUserDetails' : ActorMethod<[UserID], [] | [UserRecord]>,
   'registerUser' : ActorMethod<[Username, AvatarID], [boolean, UserID]>,
   'searchUserByPrincipal' : ActorMethod<[UserID], [] | [UserRecord]>,

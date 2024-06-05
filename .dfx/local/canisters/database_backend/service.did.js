@@ -5,9 +5,12 @@ export const idlFactory = ({ IDL }) => {
   const UserRecord = IDL.Record({
     'username' : Username,
     'userId' : UserID,
+    'friends' : IDL.Vec(UserID),
     'avatar' : AvatarID,
   });
   return IDL.Service({
+    'addFriend' : IDL.Func([UserID], [IDL.Bool, IDL.Text], []),
+    'getFriendsList' : IDL.Func([], [IDL.Opt(IDL.Vec(UserID))], ['query']),
     'getUserDetails' : IDL.Func([UserID], [IDL.Opt(UserRecord)], ['query']),
     'registerUser' : IDL.Func([Username, AvatarID], [IDL.Bool, UserID], []),
     'searchUserByPrincipal' : IDL.Func(
