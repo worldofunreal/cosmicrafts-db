@@ -1,0 +1,17 @@
+type Username = text;
+type UserRecord = 
+ record {
+   avatar: AvatarID;
+   userId: UserID;
+   username: Username;
+ };
+type UserID = principal;
+type AvatarID = nat;
+service : {
+  getUserDetails: (UserID) -> (opt UserRecord) query;
+  registerUser: (Username, AvatarID) -> (bool, UserID);
+  searchUserByPrincipal: (UserID) -> (opt UserRecord) query;
+  searchUserByUsername: (Username) -> (vec UserRecord) query;
+  updateAvatar: (AvatarID) -> (bool, UserID);
+  updateUsername: (Username) -> (bool, UserID);
+}
