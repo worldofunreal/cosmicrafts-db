@@ -9,8 +9,14 @@ type UserRecord =
 type UserID = principal;
 type UserDetails = 
  record {
-   friends: vec UserRecord;
+   friends: vec FriendDetails;
    user: UserRecord;
+ };
+type FriendDetails = 
+ record {
+   avatar: AvatarID;
+   userId: UserID;
+   username: Username;
  };
 type AvatarID = nat;
 service : {

@@ -1,10 +1,15 @@
 // Version: 1.0.0
 type AvatarID = Nat;
+type Description = Text;
+type RegistrationDate = Time;
+type Time = Int;
 type UserID = Principal;
 type UserRecord =
   {
     avatar : AvatarID;
+    description : Description;
     friends : [UserID];
+    registrationDate : RegistrationDate;
     userId : UserID;
     username : Username
   };

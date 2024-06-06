@@ -2,7 +2,9 @@ type Username = text;
 type UserRecord = 
  record {
    avatar: AvatarID;
+   description: Description;
    friends: vec UserID;
+   registrationDate: RegistrationDate;
    userId: UserID;
    username: Username;
  };
@@ -12,12 +14,14 @@ type UserDetails =
    friends: vec FriendDetails;
    user: UserRecord;
  };
+type RegistrationDate = int;
 type FriendDetails = 
  record {
    avatar: AvatarID;
    userId: UserID;
    username: Username;
  };
+type Description = text;
 type AvatarID = nat;
 service : {
   addFriend: (UserID) -> (bool, text);
@@ -27,5 +31,6 @@ service : {
   searchUserByPrincipal: (UserID) -> (opt UserRecord) query;
   searchUserByUsername: (Username) -> (vec UserRecord) query;
   updateAvatar: (AvatarID) -> (bool, UserID);
+  updateDescription: (Description) -> (bool, UserID);
   updateUsername: (Username) -> (bool, UserID);
 }

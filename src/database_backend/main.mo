@@ -3,12 +3,22 @@ import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Buffer "mo:base/Buffer";
 import Text "mo:base/Text";
+import Time "mo:base/Time";
 
 actor UserCanister {
     type UserID = Principal;
     type Username = Text;
     type AvatarID = Nat;
-    type UserRecord = { userId: UserID; username: Username; avatar: AvatarID; friends: [UserID] };
+    type Description = Text;
+    type RegistrationDate = Time.Time;
+    type UserRecord = { 
+        userId: UserID; 
+        username: Username; 
+        avatar: AvatarID; 
+        friends: [UserID]; 
+        description: Description; 
+        registrationDate: RegistrationDate 
+    };
     type FriendDetails = { userId: UserID; username: Username; avatar: AvatarID };
     type UserDetails = { user: UserRecord; friends: [FriendDetails] };
 
@@ -20,7 +30,15 @@ actor UserCanister {
         let userId = caller;
         switch (userRecords.get(userId)) {
             case (null) {
-                let newUserRecord : UserRecord = { userId = userId; username = username; avatar = avatar; friends = [] };
+                let registrationDate = Time.now();
+                let newUserRecord : UserRecord = { 
+                    userId = userId; 
+                    username = username; 
+                    avatar = avatar; 
+                    friends = []; 
+                    description = ""; 
+                    registrationDate = registrationDate 
+                };
                 userRecords.put(userId, newUserRecord);
                 return (true, userId);
             };
@@ -38,7 +56,14 @@ actor UserCanister {
                 return (false, userId); // User record does not exist
             };
             case (?userRecord) {
-                let updatedRecord : UserRecord = { userId = userRecord.userId; username = username; avatar = userRecord.avatar; friends = userRecord.friends };
+                let updatedRecord : UserRecord = { 
+                    userId = userRecord.userId; 
+                    username = username; 
+                    avatar = userRecord.avatar; 
+                    friends = userRecord.friends; 
+                    description = userRecord.description; 
+                    registrationDate = userRecord.registrationDate 
+                };
                 userRecords.put(userId, updatedRecord);
                 return (true, userId);
             };
@@ -53,7 +78,36 @@ actor UserCanister {
                 return (false, userId); // User record does not exist
             };
             case (?userRecord) {
-                let updatedRecord : UserRecord = { userId = userRecord.userId; username = userRecord.username; avatar = avatar; friends = userRecord.friends };
+                let updatedRecord : UserRecord = { 
+                    userId = userRecord.userId; 
+                    username = userRecord.username; 
+                    avatar = avatar; 
+                    friends = userRecord.friends; 
+                    description = userRecord.description; 
+                    registrationDate = userRecord.registrationDate 
+                };
+                userRecords.put(userId, updatedRecord);
+                return (true, userId);
+            };
+        };
+    };
+
+    // Function to update the description, only the user themselves can update their description
+    public shared({caller : UserID}) func updateDescription(description : Description) : async (Bool, UserID) {
+        let userId = caller;
+        switch (userRecords.get(userId)) {
+            case (null) {
+                return (false, userId); // User record does not exist
+            };
+            case (?userRecord) {
+                let updatedRecord : UserRecord = { 
+                    userId = userRecord.userId; 
+                    username = userRecord.username; 
+                    avatar = userRecord.avatar; 
+                    friends = userRecord.friends; 
+                    description = description; 
+                    registrationDate = userRecord.registrationDate 
+                };
                 userRecords.put(userId, updatedRecord);
                 return (true, userId);
             };
@@ -117,7 +171,14 @@ actor UserCanister {
                             updatedFriends.add(friend);
                         };
                         updatedFriends.add(friendId);
-                        let updatedRecord : UserRecord = { userId = userRecord.userId; username = userRecord.username; avatar = userRecord.avatar; friends = Buffer.toArray(updatedFriends) };
+                        let updatedRecord : UserRecord = { 
+                            userId = userRecord.userId; 
+                            username = userRecord.username; 
+                            avatar = userRecord.avatar; 
+                            friends = Buffer.toArray(updatedFriends); 
+                            description = userRecord.description; 
+                            registrationDate = userRecord.registrationDate 
+                        };
                         userRecords.put(userId, updatedRecord);
                         return (true, "Friend added successfully");
                     };

@@ -1,10 +1,14 @@
 export const idlFactory = ({ IDL }) => {
   const UserID = IDL.Principal;
   const Username = IDL.Text;
+  const Description = IDL.Text;
+  const RegistrationDate = IDL.Int;
   const AvatarID = IDL.Nat;
   const UserRecord = IDL.Record({
     'username' : Username,
     'userId' : UserID,
+    'description' : Description,
+    'registrationDate' : RegistrationDate,
     'friends' : IDL.Vec(UserID),
     'avatar' : AvatarID,
   });
@@ -33,6 +37,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'updateAvatar' : IDL.Func([AvatarID], [IDL.Bool, UserID], []),
+    'updateDescription' : IDL.Func([Description], [IDL.Bool, UserID], []),
     'updateUsername' : IDL.Func([Username], [IDL.Bool, UserID], []),
   });
 };
