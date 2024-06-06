@@ -7,11 +7,16 @@ type UserRecord =
    username: Username;
  };
 type UserID = principal;
+type UserDetails = 
+ record {
+   friends: vec UserRecord;
+   user: UserRecord;
+ };
 type AvatarID = nat;
 service : {
   addFriend: (UserID) -> (bool, text);
   getFriendsList: () -> (opt vec UserID) query;
-  getUserDetails: (UserID) -> (opt UserRecord) query;
+  getUserDetails: (UserID) -> (opt UserDetails) query;
   registerUser: (Username, AvatarID) -> (bool, UserID);
   searchUserByPrincipal: (UserID) -> (opt UserRecord) query;
   searchUserByUsername: (Username) -> (vec UserRecord) query;

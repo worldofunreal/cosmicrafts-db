@@ -3,6 +3,15 @@ import type { ActorMethod } from '@dfinity/agent';
 import type { IDL } from '@dfinity/candid';
 
 export type AvatarID = bigint;
+export interface FriendDetails {
+  'username' : Username,
+  'userId' : UserID,
+  'avatar' : AvatarID,
+}
+export interface UserDetails {
+  'user' : UserRecord,
+  'friends' : Array<FriendDetails>,
+}
 export type UserID = Principal;
 export interface UserRecord {
   'username' : Username,
@@ -14,7 +23,7 @@ export type Username = string;
 export interface _SERVICE {
   'addFriend' : ActorMethod<[UserID], [boolean, string]>,
   'getFriendsList' : ActorMethod<[], [] | [Array<UserID>]>,
-  'getUserDetails' : ActorMethod<[UserID], [] | [UserRecord]>,
+  'getUserDetails' : ActorMethod<[UserID], [] | [UserDetails]>,
   'registerUser' : ActorMethod<[Username, AvatarID], [boolean, UserID]>,
   'searchUserByPrincipal' : ActorMethod<[UserID], [] | [UserRecord]>,
   'searchUserByUsername' : ActorMethod<[Username], Array<UserRecord>>,

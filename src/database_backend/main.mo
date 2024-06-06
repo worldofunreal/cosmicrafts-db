@@ -2,12 +2,15 @@ import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 import Buffer "mo:base/Buffer";
+import Text "mo:base/Text";
 
 actor UserCanister {
     type UserID = Principal;
     type Username = Text;
     type AvatarID = Nat;
     type UserRecord = { userId: UserID; username: Username; avatar: AvatarID; friends: [UserID] };
+    type FriendDetails = { userId: UserID; username: Username; avatar: AvatarID };
+    type UserDetails = { user: UserRecord; friends: [FriendDetails] };
 
     private stable var _userRecords : [(UserID, UserRecord)] = [];
     var userRecords : HashMap.HashMap<UserID, UserRecord> = HashMap.fromIter(_userRecords.vals(), 0, Principal.equal, Principal.hash);
@@ -57,9 +60,27 @@ actor UserCanister {
         };
     };
 
-    // Function to get user details
-    public query func getUserDetails(user : UserID) : async ?UserRecord {
-        return userRecords.get(user);
+    // Function to get user details along with friends' details
+    public query func getUserDetails(user : UserID) : async ?UserDetails {
+        switch (userRecords.get(user)) {
+            case (?userRecord) {
+                let friendsBuffer = Buffer.Buffer<FriendDetails>(userRecord.friends.size());
+                for (friendId in userRecord.friends.vals()) {
+                    switch (userRecords.get(friendId)) {
+                        case (?friendRecord) {
+                            let friendDetails : FriendDetails = { userId = friendRecord.userId; username = friendRecord.username; avatar = friendRecord.avatar };
+                            friendsBuffer.add(friendDetails);
+                        };
+                        case null {};
+                    }
+                };
+                let friendsList = Buffer.toArray(friendsBuffer);
+                return ?{ user = userRecord; friends = friendsList };
+            };
+            case null {
+                return null;
+            };
+        };
     };
 
     // Function to search for user details by username
